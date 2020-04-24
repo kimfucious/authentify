@@ -1,0 +1,25 @@
+{
+	"auth": {
+		"authentifya6e66045": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	},
+	"function": {
+		"authentifyPreSignUp": {
+			"build": true,
+			"providerPlugin": "awscloudformation",
+			"service": "Lambda",
+			"dependsOn": [
+				{
+					"category": "auth",
+					"resourceName": "authentifya6e66045",
+					"attributes": [
+						"UserPoolId"
+					]
+				}
+			]
+		}
+	}
+}

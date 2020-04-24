@@ -1,0 +1,9 @@
+{
+    "permissions": {
+        "auth": {
+            "authentifya6e66045": [
+                "read"
+            ]
+        }
+    }
+}

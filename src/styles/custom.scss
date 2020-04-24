@@ -1,0 +1,87 @@
+$body-bg: #343a40;
+$body-color: #f8f9fa;
+$primary: #ff69b4;
+// $primary: #c07a9d;
+$secondary: #ffd700;
+
+@import "~animate.css/animate.css";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+
+@import "~bootstrap/scss/alert";
+@import "~bootstrap/scss/close";
+@import "~bootstrap/scss/buttons";
+@import "~bootstrap/scss/list-group";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/spinners";
+@import "~bootstrap/scss/type";
+
+input,
+.form-control {
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  background-color: darken($color: $body-bg, $amount: 8);
+  border-radius: 8px;
+  border: none !important;
+  box-shadow: none !important;
+  color: $body-color;
+  outline: none !important;
+  padding-bottom: 0.5rem;
+  padding-left: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.form-group {
+  margin-bottom: 0.75rem;
+}
+
+.form-control::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: darken($color: $light, $amount: 33);
+  opacity: 1; /* Firefox */
+}
+
+.form-control:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: darken($color: $light, $amount: 33);
+}
+
+.form-control::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: darken($color: $light, $amount: 33);
+}
+
+.fieldHelperText {
+  padding-left: 0.5rem;
+  color: $light;
+  font-size: 0.75rem;
+}
+
+.formikErrorMessage {
+  padding-left: 0.5rem;
+  color: $secondary;
+  font-size: 0.75rem;
+}
+
+.list-group-mine .list-group-item {
+  background-color: transparent;
+  border-top: 1px solid $body-color;
+  border-bottom: 1px solid $body-color;
+  border-left-color: $body-color;
+  border-right-color: $body-color;
+}
+
+.rotate {
+  animation: rotation 4s infinite linear;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
