@@ -20,6 +20,48 @@
 					]
 				}
 			]
+		},
+		"authentifyCreateAuthChallenge": {
+			"build": true,
+			"providerPlugin": "awscloudformation",
+			"service": "Lambda",
+			"dependsOn": [
+				{
+					"category": "auth",
+					"resourceName": "authentifya6e66045",
+					"attributes": [
+						"UserPoolId"
+					]
+				}
+			]
+		},
+		"authentifyDefineAuthChallenge": {
+			"build": true,
+			"providerPlugin": "awscloudformation",
+			"service": "Lambda",
+			"dependsOn": [
+				{
+					"category": "auth",
+					"resourceName": "authentifya6e66045",
+					"attributes": [
+						"UserPoolId"
+					]
+				}
+			]
+		},
+		"authentifyVerifyAuthChallengeResponse": {
+			"build": true,
+			"providerPlugin": "awscloudformation",
+			"service": "Lambda",
+			"dependsOn": [
+				{
+					"category": "auth",
+					"resourceName": "authentifya6e66045",
+					"attributes": [
+						"UserPoolId"
+					]
+				}
+			]
 		}
 	}
 }
