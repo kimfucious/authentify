@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <style>
+      body {
+        text-align: center;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+          "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      }
+
+      .lead-1 {
+        font-size: 1.5rem;
+        font-weight: 300;
+      }
+      .lead-2 {
+        font-size: 1.25rem;
+        font-weight: 300;
+      }
+      .lead-3 {
+        font-size: 1rem;
+        font-weight: 300;
+      }
+
+      .display {
+        font-size: 6rem;
+        font-weight: 300;
+        line-height: 1.2;
+        margin: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="font-size: 96px;">🕵️</div>
+    <h1 class="display">Authentify</h1>
+    <h2 class="lead-1">Howdy, ${username}!</h2>
+    <h3 class="lead-2">Here's your code to sign in to Authentify:</h3>
+    <p class="lead-3">${secretLoginCode}</p>
+  </body>
+</html>
