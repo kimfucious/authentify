@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Auth } from "aws-amplify";
 import { compact, pick } from "lodash";
@@ -11,13 +11,16 @@ export const UserConfirmationForm = ({
   confirmationUsername,
   setConfirmationUsername,
   formStatus,
+  passwordlessCognitoUser,
   setFormAction,
-  setFormStatus
+  setFormStatus,
+  setPasswordlessCognitoUser
 }) => {
   const dispatch = useDispatch();
 
   const [isCodeSent, setIsCodeSent] = useState(false);
 
+  let sentCount = 0;
   const handleResendCode = async () => {
     try {
       await Auth.resendSignUp(confirmationUsername);
@@ -29,9 +32,6 @@ export const UserConfirmationForm = ({
 
   return (
     <div className="d-flex flex-column align-items-center">
-      {/* <div className="display mb-3" style={{ fontSize: "24px" }}>
-        Sign in
-      </div> */}
       {formStatus === "signUpSuccess" ? (
         <>
           <StatusMessage
@@ -55,7 +55,9 @@ export const UserConfirmationForm = ({
         <>
           <StatusMessage
             title="Check your inbox"
-            subtitle="Use the verification code to finish signing up"
+            subtitle={`Use the verification code to ${
+              passwordlessCognitoUser ? "sign in" : "finish signing up"
+            }`}
             emoticon="📬"
           />
           <div className="mb-3" />
@@ -65,26 +67,62 @@ export const UserConfirmationForm = ({
               username: confirmationUsername
             }}
             validationSchema={confirmationSchema}
-            onSubmit={async (values, { setSubmitting }) => {
-              try {
-                setSubmitting(true);
-                const data = await Auth.confirmSignUp(
-                  values.username,
-                  values.code
-                );
-                if (data === "SUCCESS") {
-                  setFormStatus("signUpSuccess");
+            onSubmit={async (
+              values,
+              { setSubmitting, setFieldError, resetForm }
+            ) => {
+              if (passwordlessCognitoUser) {
+                try {
+                  const result = await Auth.sendCustomChallengeAnswer(
+                    passwordlessCognitoUser,
+                    values.code
+                  );
+                  console.log("RESULT", result);
+                  if (
+                    result.challengeName &&
+                    result.challengeName === "CUSTOM_CHALLENGE"
+                  ) {
+                    sentCount++;
+                    console.log("SENT COUNT: ", sentCount);
+                    if (sentCount > 0) {
+                      setFieldError(
+                        "code",
+                        `Incorrect code. ${3 - sentCount} more ${
+                          3 - sentCount === 1 ? "try" : "tries"
+                        }.`
+                      );
+                    }
+                  }
+                } catch (error) {
+                  console.warn(error);
+                  setConfirmationUsername("");
+                  setPasswordlessCognitoUser(null);
+                  resetForm();
                 }
-                console.log("DATA: ", data);
-                // setSubmitting(false);
-              } catch (error) {
-                setSubmitting(false);
-                dispatch({ type: "COGNITO_USER_SIGNUP_FAIL", payload: error });
-                console.warn(error.response || error);
+              } else {
+                try {
+                  setSubmitting(true);
+                  const data = await Auth.confirmSignUp(
+                    values.username,
+                    values.code
+                  );
+                  if (data === "SUCCESS") {
+                    setFormStatus("signUpSuccess");
+                  }
+                  console.log("DATA: ", data);
+                  // setSubmitting(false);
+                } catch (error) {
+                  setSubmitting(false);
+                  dispatch({
+                    type: "COGNITO_USER_SIGNUP_FAIL",
+                    payload: error
+                  });
+                  console.warn(error.response || error);
+                }
               }
             }}
           >
-            {({ errors, values, isSubmitting }) => {
+            {({ errors, values, isSubmitting, resetForm }) => {
               const getDisabled = () => {
                 const errs = !!compact(Object.values(errors)).length;
                 const vals = !!compact(pick(values, "username", "code")).length;
@@ -104,11 +142,7 @@ export const UserConfirmationForm = ({
                     />
                     {errors.code ? (
                       <div className="formikErrorMessage">
-                        <ErrorMessage
-                          name="code"
-                          id="codeHelp"
-                          className="text-danger"
-                        />
+                        <ErrorMessage name="code" id="codeHelp" />
                       </div>
                     ) : (
                       <small className="fieldHelperText" id="accessCodeHelp">
@@ -117,10 +151,17 @@ export const UserConfirmationForm = ({
                     )}
                   </div>
                   <Button
-                    btnText="Confirm Signup"
+                    btnText={`Confirm ${
+                      passwordlessCognitoUser ? "sign-in" : "sign-up"
+                    } code`}
                     className="my-3"
                     color="secondary"
-                    isDisabled={getDisabled()}
+                    isDisabled={
+                      !values.code ||
+                      !values.username ||
+                      errors.code ||
+                      errors.username
+                    }
                     isSpinning={isSubmitting}
                     fn={() => {}}
                     icon="password"
@@ -128,11 +169,23 @@ export const UserConfirmationForm = ({
                     type="submit"
                     width={240}
                   />
+                  <Button
+                    btnText={<small>Back to Sign-in Page</small>}
+                    className="my-3"
+                    color="light"
+                    link
+                    fn={() => {
+                      setConfirmationUsername("");
+                      setPasswordlessCognitoUser(null);
+                      resetForm();
+                    }}
+                    type="button"
+                  />
                   {isCodeSent ? (
                     <div className="font-weight-bold text-success">
                       Code has been resent!
                     </div>
-                  ) : (
+                  ) : !passwordlessCognitoUser ? (
                     <Button
                       btnText={<small>Resend Verification Code</small>}
                       className="my-3"
@@ -142,11 +195,9 @@ export const UserConfirmationForm = ({
                       fn={() => {
                         handleResendCode();
                       }}
-                      height={44}
-                      // type="submit"
-                      width={240}
+                      type="button"
                     />
-                  )}
+                  ) : null}
                 </Form>
               );
             }}

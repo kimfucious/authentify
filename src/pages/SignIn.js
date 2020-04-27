@@ -12,10 +12,9 @@ export const SignIn = () => {
   const [formAction, setFormAction] = useState("signIn");
   const [formStatus, setFormStatus] = useState("");
   const [confirmationUsername, setConfirmationUsername] = useState("");
-  const [isSignInSpinning, setIsSignInSpinning] = useState(false);
-  const [isSignUpSpinning, setIsSignUpSpinning] = useState(false);
-  const [isAppleSignInSpinning, setIsAppleSignInSpinning] = useState(false);
-  const [isGoogleSignInSpinning, setIsGoogleSignInSpinning] = useState(false);
+  const [isSignInSpinning] = useState(false);
+  const [isSignUpSpinning] = useState(false);
+  const [passwordlessCognitoUser, setPasswordlessCognitoUser] = useState(null);
 
   useEffect(() => {
     const signUpError = getError(["COGNITO_USER_SIGNUP"], errors);
@@ -25,12 +24,39 @@ export const SignIn = () => {
     } else setError({ title: "", message: "" });
   }, [errors]);
 
+  const renderForm = () => {
+    if (confirmationUsername) {
+      return (
+        <UserConfirmationForm
+          confirmationUsername={confirmationUsername}
+          setConfirmationUsername={setConfirmationUsername}
+          formStatus={formStatus}
+          passwordlessCognitoUser={passwordlessCognitoUser}
+          setPasswordlessCognitoUser={setPasswordlessCognitoUser}
+          setFormAction={setFormAction}
+          setFormStatus={setFormStatus}
+        />
+      );
+    } else {
+      return (
+        <SignInForm
+          formAction={formAction}
+          isSignInSpinning={isSignInSpinning}
+          isSignUpSpinning={isSignUpSpinning}
+          setConfirmationUsername={setConfirmationUsername}
+          setFormAction={setFormAction}
+          setPasswordlessCognitoUser={setPasswordlessCognitoUser}
+        />
+      );
+    }
+  };
+
   return (
     <div className="d-flex flex-column justify-content-center align-items-center vh-100">
       {error.message ? (
         <Alert action="COGNITO_USER_SIGNUP" error={error} color="danger" />
       ) : null}
-      {formAction === "signIn" ? (
+      {formAction === "signIn" && !passwordlessCognitoUser ? (
         <>
           <img
             src={cognitoLogo}
@@ -45,35 +71,14 @@ export const SignIn = () => {
         </>
       ) : !confirmationUsername ? (
         <>
-          {/* <img
-            src={cognitoLogo}
-            alt="AWS Cognito Logo"
-            height="200px"
-            widht="200px"
-          /> */}
-          <div className="display-4 mt-3 mb-4 text-light">New User Sign Up</div>
-          {/* <div className="lead mb-5 text-light">
-            A Cognito Federated Sign-in Demo
-          </div> */}
+          {!passwordlessCognitoUser ? (
+            <div className="display-4 mt-3 mb-4 text-light">
+              New User Sign Up
+            </div>
+          ) : null}
         </>
       ) : null}
-      {confirmationUsername ? (
-        <UserConfirmationForm
-          confirmationUsername={confirmationUsername}
-          setConfirmationUsername={setConfirmationUsername}
-          formStatus={formStatus}
-          setFormAction={setFormAction}
-          setFormStatus={setFormStatus}
-        />
-      ) : (
-        <SignInForm
-          formAction={formAction}
-          isSignInSpinning={isSignInSpinning}
-          isSignUpSpinning={isSignUpSpinning}
-          setConfirmationUsername={setConfirmationUsername}
-          setFormAction={setFormAction}
-        />
-      )}
+      {renderForm()}
     </div>
   );
 };

@@ -8,9 +8,8 @@ import { Auth } from "aws-amplify";
 
 export const SignInForm = ({
   formAction,
-  isSignInSpinning,
-  isSignUpSpinning,
   setConfirmationUsername,
+  setPasswordlessCognitoUser,
   setFormAction
 }) => {
   const dispatch = useDispatch();
@@ -42,14 +41,12 @@ export const SignInForm = ({
   };
   const getSchema = () => {
     if (formAction === "signUp") {
-      console.log("signUp", signUpSchema);
       return signUpSchema;
     } else if (
       formAction === "signIn" &&
       !isAppleBtnSpinning &&
       !isGoogleBtnSpinning
     ) {
-      console.log("signIn", signInSchema);
       return signInSchema;
     } else {
       console.log("no schema!", null);
@@ -60,7 +57,6 @@ export const SignInForm = ({
   return (
     <Formik
       initialValues={{
-        accessCode: "",
         appleEmail: "",
         email: "",
         googleEmail: "",
@@ -81,19 +77,20 @@ export const SignInForm = ({
             }
           } else if (values.signInWithGoogle) {
             try {
-              console.warn(
-                "Signing in with Google.  WTF is the button not spinning?"
-              );
               Auth.federatedSignIn({ provider: "Google" });
             } catch (error) {
               setIsGoogleBtnSpinning(false);
               // handle error
             }
           } else {
-            alert("I don't do anything yet");
-            setIsSubmitting(false);
-            // const user = await Auth.signInWithoutPassword(values.username);
-            // console.log("SIGN IN WITHOUT PASSWORD:", user);
+            try {
+              const cognitoUser = await Auth.signIn(values.username);
+              console.log("COGNITO USER", cognitoUser);
+              setPasswordlessCognitoUser(cognitoUser);
+              setConfirmationUsername(cognitoUser.username);
+            } catch (error) {
+              console.warn("SIGN IN WITHOUT PASSWORD ERROR", error);
+            }
           }
         } else if (formAction === "signUp") {
           try {
@@ -125,7 +122,7 @@ export const SignInForm = ({
           } else if (formAction === "signUp") {
             const errs = !!compact(Object.values(errors)).length;
             const vals = !!compact(
-              pick(values, "accessCode", "email", "username", "password")
+              pick(values, "email", "username", "password")
             ).length;
             return errs && vals && isSubmitting;
           }
@@ -163,10 +160,6 @@ export const SignInForm = ({
                     id="emailInput"
                     name="email"
                     placeholder="ada@lovelace.com"
-                    // onChange={(e) => {
-                    // setEmail(e.target.value);
-                    // setgoogleEmail(e.target.value);
-                    // }}
                     type="text"
                   />
                   <div className="formikErrorMessage">
@@ -190,26 +183,6 @@ export const SignInForm = ({
                   <div className="formikErrorMessage">
                     <ErrorMessage name="password" id="passwordHelp" />
                   </div>
-                </div>
-                <div className="d-flex flex-column form-group w-100">
-                  <label htmlFor="accessCodeInput">Access Code</label>
-                  <Field
-                    type="text"
-                    className="form-control"
-                    id="accessCodeInput"
-                    name="accessCode"
-                    placeholder="73WakrfVbNJBaAmhQtEeDv"
-                    aria-describedby="accessCodeHelp"
-                  />
-                  {errors.accessCode ? (
-                    <div className="formikErrorMessage">
-                      <ErrorMessage name="accessCode" id="accessCodeHelp" />
-                    </div>
-                  ) : (
-                    <small className="fieldHelperText" id="accessCodeHelp">
-                      Get this from your administrator
-                    </small>
-                  )}
                 </div>
                 <div className="d-flex flex-column form-group w-100">
                   <label htmlFor="appleEmailInput">Apple Email</label>
@@ -296,13 +269,6 @@ export const SignInForm = ({
                   type="submit"
                   width={240}
                 />
-                <div className="d-flex justify-content-center">
-                  {/* <Button
-              btnText={<small>Forgot Password</small>}
-              color="light"
-              link
-            /> */}
-                </div>
               </>
             ) : null}
             <Button
@@ -311,6 +277,7 @@ export const SignInForm = ({
                   {formAction === "signIn" ? "New User" : "Existing User"}
                 </small>
               }
+              className="py-0"
               fn={() => {
                 setFormAction(formAction === "signIn" ? "signUp" : "signIn");
               }}
@@ -319,23 +286,21 @@ export const SignInForm = ({
             />
             {isCodeSent ? (
               <div
-                class="spinner-border spinner-border-sm text-light"
+                className="spinner-border spinner-border-sm text-light"
                 role="status"
               >
                 <span class="sr-only">Loading...</span>
               </div>
             ) : (
               <Button
-                btnText={<small>Resend Verification Code</small>}
-                className="my-0"
+                btnText={<small>Resend Sign-up Verification Code</small>}
+                className="py-0"
                 color="light"
                 isDisabled={!values.username}
                 link
                 fn={() => {
                   handleResendCode(values.username);
                 }}
-                height={44}
-                width={240}
               />
             )}
           </Form>
