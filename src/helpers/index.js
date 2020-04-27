@@ -21,8 +21,6 @@ export const signInSchema = Yup.object({
     .required("Required")
 });
 export const signUpSchema = Yup.object({
-  accessCode: Yup.string().length(22, "Must be at least exactly 22 characters"),
-  // .required("Required"),
   appleEmail: Yup.string().email("Invalid email address"),
   email: Yup.string().email("Invalid email address").required("Required"),
   googleEmail: Yup.string().email("Invalid email address"),
