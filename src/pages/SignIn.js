@@ -65,7 +65,7 @@ export const SignIn = () => {
             widht="200px"
           />
           <div className="display-4 mt-3 mb-2 text-light">Authentify</div>
-          <div className="lead mb-5 text-light">
+          <div className="lead mb-4 text-light">
             A Cognito Federated Sign-in Demo
           </div>
         </>
