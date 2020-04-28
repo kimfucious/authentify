@@ -18,6 +18,14 @@ $secondary: #ffd700;
 @import "~bootstrap/scss/spinners";
 @import "~bootstrap/scss/type";
 
+// This is to prevent the underline persisting after click
+.btn-link:focus {
+  text-decoration: none;
+}
+.btn-link:hover:focus {
+  text-decoration: underline;
+}
+
 input,
 .form-control {
   -moz-box-shadow: none !important;
