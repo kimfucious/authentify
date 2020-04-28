@@ -502,9 +502,16 @@ In real life, I believe another solution would be required, such as only allowin
 
 ## References
 
+- [A sample implementation of Passwordless E-Mail Auth in Amazon Cognito](https://github.com/aws-samples/amazon-cognito-passwordless-email-auth)
+- [Authorizing Amazon Cognito to Send Amazon SES Email on Your Behalf (from a Custom FROM Email Address)](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pool-settings-ses-authorization-to-send-email.html)
 - [AWS Amplify Javascript Authentication (official)](https://aws-amplify.github.io/docs/js/authentication)
 - [AWS Amplify Javascript Hub (official)](https://aws-amplify.github.io/docs/js/hub)
 - [AWS Cognito Developerguide (official)](https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html)
+- [Customizing User Pool Workflows with Lambda Triggers](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools-working-with-aws-lambda-triggers.html)
+- [https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html)
+- [Implementing passwordless email authentication with Amazon Cognito](https://aws.amazon.com/blogs/mobile/implementing-passwordless-email-authentication-with-amazon-cognito/)
+- [Making setInterval Declarative with React Hooks by Dan Abramov](https://overreacted.io/making-setinterval-declarative-with-react-hooks/)
+- [Send with SES](https://docs.sendwithses.com/)
 - [Social Provider Setup Docs (Amazon, Facebook, Google) by Amplify](https://aws-amplify.github.io/docs/js/cognito-hosted-ui-federated-identity#social-provider-setup)
 - [The Complete React Native Guide to User Authentication with the Amplify Framework by Nader Dabit](https://dev.to/aws/the-complete-react-native-guide-to-user-authentication-with-the-amplify-framework-ib2)
-- [Making setInterval Declarative with React Hooks by Dan Abramov](https://overreacted.io/making-setinterval-declarative-with-react-hooks/)
+- [Working with Email Templates in Amazon SES](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/ses-examples-creating-template.html)
