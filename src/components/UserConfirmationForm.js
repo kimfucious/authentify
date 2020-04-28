@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Auth } from "aws-amplify";
 import { Button } from "../components/shared/Button";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { confirmationSchema } from "../helpers";
+import { confirmationSchema } from "../validators";
 import StatusMessage from "./shared/StatusMessage";
 
 export const UserConfirmationForm = ({
