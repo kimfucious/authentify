@@ -74,7 +74,7 @@
 				"Runtime": "nodejs12.x",
 				"Timeout": "25",
 				"Code": {
-					"S3Bucket": "amplify-authentify-prod-175525-deployment",
+					"S3Bucket": "amplify-authentify-prod-182642-deployment",
 					"S3Key": "amplify-builds/authentifyVerifyAuthChallengeResponse-48576f4651443867556e-build.zip"
 				}
 			}
