@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Button } from "./shared/Button";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import { compact, pick } from "lodash";
-import { signInSchema, signUpSchema } from "../helpers";
+import { signInSchema, signUpSchema } from "../validators";
 import { Auth } from "aws-amplify";
 
 export const SignInForm = ({
@@ -66,7 +66,7 @@ export const SignInForm = ({
         username: ""
       }}
       validationSchema={getSchema()}
-      onSubmit={async (values, { setSubmitting: setIsSubmitting }) => {
+      onSubmit={async (values, { setSubmitting, setFieldError }) => {
         if (formAction === "signIn") {
           if (values.signInWithApple) {
             try {
@@ -90,6 +90,7 @@ export const SignInForm = ({
               setConfirmationUsername(cognitoUser.username);
             } catch (error) {
               console.warn("SIGN IN WITHOUT PASSWORD ERROR", error);
+              setFieldError("username", error.message);
             }
           }
         } else if (formAction === "signUp") {
@@ -109,13 +110,13 @@ export const SignInForm = ({
             }
             console.warn("Sign Up User: ", cognitoUser);
           } catch (error) {
-            setIsSubmitting(false);
+            setSubmitting(false);
             console.warn(error.response || error);
           }
         }
       }}
     >
-      {({ errors, values, isSubmitting, setFieldValue }) => {
+      {({ errors, values, isSubmitting, setFieldValue, touched }) => {
         const getDisabled = () => {
           if (formAction === "signIn") {
             return !values.username || errors.username;
@@ -140,11 +141,11 @@ export const SignInForm = ({
                 placeholder="Ada"
                 aria-describedby="usernameHelp"
               />
-              {formAction !== "signIn" && errors.username ? (
+              {errors.username && touched.username ? (
                 <div className="formikErrorMessage">
                   <ErrorMessage name="username" id="usernameHelp" />
                 </div>
-              ) : formAction ? (
+              ) : formAction === "signIn" ? (
                 <small className="fieldHelperText" id="usernameHelp">
                   Required for Sign in without Password
                 </small>
@@ -194,7 +195,7 @@ export const SignInForm = ({
                     placeholder="ada@icloud.com"
                     aria-describedby="appleEmailHelp"
                   />
-                  {errors.appleEmail ? (
+                  {errors.appleEmail && touched.appleEmail ? (
                     <div className="formikErrorMessage">
                       <ErrorMessage name="appleEmail" id="appleEmailHelp" />
                     </div>
@@ -214,7 +215,7 @@ export const SignInForm = ({
                     placeholder="ada@gmail.com"
                     aria-describedby="googleEmailHelp"
                   />
-                  {errors.googleEmail ? (
+                  {errors.googleEmail && touched.googleEmail ? (
                     <div className="formikErrorMessage">
                       <ErrorMessage name="googleEmail" id="googleEmailHelp" />
                     </div>
