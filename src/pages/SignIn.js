@@ -18,8 +18,8 @@ export const SignIn = () => {
 
   useEffect(() => {
     const signUpError = getError(["COGNITO_USER_SIGNUP"], errors);
-    console.warn(signUpError);
     if (signUpError) {
+      console.warn(signUpError);
       setError({ title: "Sign Up Error", message: signUpError });
     } else setError({ title: "", message: "" });
   }, [errors]);
