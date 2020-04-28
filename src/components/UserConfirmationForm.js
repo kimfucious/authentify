@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Auth } from "aws-amplify";
-import { compact, pick } from "lodash";
 import { Button } from "../components/shared/Button";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { confirmationSchema } from "../helpers";
@@ -122,85 +121,78 @@ export const UserConfirmationForm = ({
               }
             }}
           >
-            {({ errors, values, isSubmitting, resetForm }) => {
-              const getDisabled = () => {
-                const errs = !!compact(Object.values(errors)).length;
-                const vals = !!compact(pick(values, "username", "code")).length;
-                return errs && vals && isSubmitting;
-              };
-              return (
-                <Form className="d-flex flex-column align-items-center mb-3">
-                  <div className="d-flex flex-column form-group w-100">
-                    <label htmlFor="codeInput">Verification Code</label>
-                    <Field
-                      aria-describedby="codeHelp"
-                      className="form-control"
-                      id="codeInput"
-                      name="code"
-                      placeholder="123456"
-                      type="text"
-                    />
-                    {errors.code ? (
-                      <div className="formikErrorMessage">
-                        <ErrorMessage name="code" id="codeHelp" />
-                      </div>
-                    ) : (
-                      <small className="fieldHelperText" id="accessCodeHelp">
-                        Check your inbox
-                      </small>
-                    )}
-                  </div>
-                  <Button
-                    btnText={`Confirm ${
-                      passwordlessCognitoUser ? "sign-in" : "sign-up"
-                    } code`}
-                    className="my-3"
-                    color="secondary"
-                    isDisabled={
-                      !values.code ||
-                      !values.username ||
-                      errors.code ||
-                      errors.username
-                    }
-                    isSpinning={isSubmitting}
-                    fn={() => {}}
-                    icon="password"
-                    height={44}
-                    type="submit"
-                    width={240}
+            {({ errors, values, isSubmitting, resetForm }) => (
+              <Form className="d-flex flex-column align-items-center mb-3">
+                <div className="d-flex flex-column form-group w-100">
+                  <label htmlFor="codeInput">Verification Code</label>
+                  <Field
+                    aria-describedby="codeHelp"
+                    className="form-control"
+                    id="codeInput"
+                    name="code"
+                    placeholder="123456"
+                    type="text"
                   />
+                  {errors.code ? (
+                    <div className="formikErrorMessage">
+                      <ErrorMessage name="code" id="codeHelp" />
+                    </div>
+                  ) : (
+                    <small className="fieldHelperText" id="codeHelp">
+                      Check your inbox
+                    </small>
+                  )}
+                </div>
+                <Button
+                  btnText={`Confirm ${
+                    passwordlessCognitoUser ? "sign-in" : "sign-up"
+                  } code`}
+                  className="my-3"
+                  color="secondary"
+                  isDisabled={
+                    !values.code ||
+                    !values.username ||
+                    errors.code ||
+                    errors.username
+                  }
+                  isSpinning={isSubmitting}
+                  fn={() => {}}
+                  icon="password"
+                  height={44}
+                  type="submit"
+                  width={240}
+                />
+                <Button
+                  btnText={<small>Back to Sign-in Page</small>}
+                  className="my-3"
+                  color="light"
+                  link
+                  fn={() => {
+                    setConfirmationUsername("");
+                    setPasswordlessCognitoUser(null);
+                    resetForm();
+                  }}
+                  type="button"
+                />
+                {isCodeSent ? (
+                  <div className="font-weight-bold text-success">
+                    Code has been resent!
+                  </div>
+                ) : !passwordlessCognitoUser ? (
                   <Button
-                    btnText={<small>Back to Sign-in Page</small>}
+                    btnText={<small>Resend Verification Code</small>}
                     className="my-3"
                     color="light"
+                    isSpinning={isSubmitting}
                     link
                     fn={() => {
-                      setConfirmationUsername("");
-                      setPasswordlessCognitoUser(null);
-                      resetForm();
+                      handleResendCode();
                     }}
                     type="button"
                   />
-                  {isCodeSent ? (
-                    <div className="font-weight-bold text-success">
-                      Code has been resent!
-                    </div>
-                  ) : !passwordlessCognitoUser ? (
-                    <Button
-                      btnText={<small>Resend Verification Code</small>}
-                      className="my-3"
-                      color="light"
-                      isSpinning={isSubmitting}
-                      link
-                      fn={() => {
-                        handleResendCode();
-                      }}
-                      type="button"
-                    />
-                  ) : null}
-                </Form>
-              );
-            }}
+                ) : null}
+              </Form>
+            )}
           </Formik>
         </>
       )}
