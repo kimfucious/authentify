@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
 import { Formik } from "formik";
-import { signUpSchema } from "../helpers";
+import { signUpSchema } from "../validators";
 import { SignInForm } from "./SignInForm";
 
 export const SignInFormik = ({
